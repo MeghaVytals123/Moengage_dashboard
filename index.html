@@ -1,0 +1,522 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.sel td{background:color-mix(in srgb,var(--c-push) 14%,transparent)}
+</style></head><body>
+<title>Spunge MoEngage Channel Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;600;700;800&family=Sofia+Sans+Condensed:wght@600;700;800&display=swap">
+<style>
+/* Layout: ops dashboard — brand teal masthead, summary tiles, channel scorecard, funnels, broadcast timeline, findings, explorer tables */
+:root{
+  --bg:#f5f8f8; --surface:#fcfdfd; --surface-2:#eef3f4; --ink:#0f1e22; --ink-2:#4b5b60; --muted:#7c8a8f;
+  --line:#dfe7e8; --line-strong:#c4d1d3; --accent:#006375; --accent-ink:#ffffff; --accent-soft:#e1eff1;
+  --c-wa:#009c49; --c-push:#2a78d6; --c-site:#eda100; --c-email:#00869f; --c-sms:#eb6834;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --font:"Sofia Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-d:"Sofia Sans Condensed","Sofia Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1517; --surface:#131e21; --surface-2:#1a272a; --ink:#eef4f5; --ink-2:#b4c3c6; --muted:#83969a;
+  --line:#243336; --line-strong:#33474b; --accent:#0a7f95; --accent-ink:#ffffff; --accent-soft:#16343a;
+  --c-wa:#0f9e52; --c-push:#3987e5; --c-site:#c98500; --c-email:#06a3c0; --c-sms:#d95926;
+  --good-ink:#0ca30c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1517; --surface:#131e21; --surface-2:#1a272a; --ink:#eef4f5; --ink-2:#b4c3c6; --muted:#83969a;
+  --line:#243336; --line-strong:#33474b; --accent:#0a7f95; --accent-ink:#ffffff; --accent-soft:#16343a;
+  --c-wa:#0f9e52; --c-push:#3987e5; --c-site:#c98500; --c-email:#06a3c0; --c-sms:#d95926;
+  --good-ink:#0ca30c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--font-d);text-wrap:balance;margin:0;letter-spacing:-.005em}
+.mast{background:var(--accent);color:var(--accent-ink);padding-block:26px 22px}
+.mast .wrap{padding-block:0;display:flex;flex-wrap:wrap;gap:12px 32px;align-items:flex-end;justify-content:space-between}
+.mast h1{font-size:clamp(26px,4vw,36px);font-weight:800;line-height:1.05}
+.mast p{margin:6px 0 0;opacity:.88;font-size:14px}
+.mast .meta{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}
+.mast .meta b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:600}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;padding-block:10px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--ink-2);padding:6px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line-strong)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible,.chip:focus-visible,th button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--c-push);outline-offset:2px}
+.lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+section{margin-top:34px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:14px}
+.sh h2{font-size:22px;font-weight:700}
+.sh p{margin:0;color:var(--ink-2);font-size:13.5px;max-width:70ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:24px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.tile .v{font-family:var(--font-d);font-size:32px;font-weight:800;line-height:1.1;margin-top:4px}
+.tile .s{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--surface)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tbody tr:hover{background:var(--surface-2)}
+th button{all:unset;cursor:pointer}
+th button[data-dir]::after{content:attr(data-dir);margin-left:4px;color:var(--accent)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+.rate{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+.rate i{display:inline-block;width:56px;height:6px;border-radius:3px;background:var(--surface-2);position:relative;overflow:hidden}
+.rate i s{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--ink-2)}
+.na{color:var(--muted)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--line-strong);color:var(--ink-2);background:var(--surface-2)}
+.pill.on{color:var(--good-ink);border-color:color-mix(in srgb,var(--good) 45%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:16px}
+.funnels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
+.fn{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.fn h3{font-size:17px;font-weight:700;display:flex;align-items:center}
+.fn .row{display:grid;grid-template-columns:78px 1fr auto;gap:10px;align-items:center;margin-top:9px;font-size:12.5px}
+.fn .row .t{height:14px;background:var(--surface-2);border-radius:0 4px 4px 0;position:relative}
+.fn .row .t b{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;min-width:2px}
+.fn .row .n{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;min-width:84px;text-align:right}
+.fn .row .n small{color:var(--muted);font-weight:500;margin-left:4px}
+.fn .foot{margin-top:10px;font-size:12px;color:var(--muted)}
+svg text{font-family:var(--font);fill:var(--muted);font-size:11px}
+svg .ax{stroke:var(--line-strong)} svg .gr{stroke:var(--line)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center}
+.find{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:12px}
+.fi{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--sev);border-radius:10px;padding:14px 16px;min-width:0}
+.fi .tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.fi .tag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--sev)}
+.fi h3{font-size:17px;margin-top:6px;font-weight:700}
+.fi p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+.fi p b{color:var(--ink)}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:12px}
+.chip{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);padding:5px 10px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center}
+.chip[aria-pressed="true"]{border-color:var(--ink-2);color:var(--ink);background:var(--surface-2)}
+.chip[aria-pressed="false"] .sw{opacity:.3}
+select,input[type=search]{font:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=search]{min-width:0;width:220px;max-width:100%}
+.ck{font-size:13px;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.scroll thead th{position:sticky;top:0;z-index:1}
+td.nm{max-width:300px;overflow:hidden;text-overflow:ellipsis}
+td .sub{display:block;font-size:11.5px;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:8px 10px;border-radius:8px;z-index:20;max-width:260px;line-height:1.4}
+.tip b{font-weight:700}
+.notes{font-size:13px;color:var(--ink-2);columns:2 340px;column-gap:28px}
+.notes p{margin:0 0 10px;break-inside:avoid}
+.notes b{color:var(--ink)}
+.count{font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.tabs{background:var(--accent);}
+.tabs .wrap{display:flex;gap:4px;padding-block:0;overflow-x:auto}.tabs button{flex:none}
+.tabs button{font:inherit;font-size:14px;font-weight:700;border:0;background:transparent;color:var(--accent-ink);opacity:.75;padding:10px 16px 11px;border-radius:8px 8px 0 0;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
+.tabs button:focus-visible{outline:2px solid var(--c-push);outline-offset:-2px}
+.fig{position:relative;height:280px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.mk{font-size:12px;color:var(--ink-2)}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div>
+      <div class="lbl" style="color:inherit;opacity:.8">spunge · CRM · MoEngage</div>
+      <h1>Channel performance, 10 Aug – 23 Nov</h1>
+      <p>WhatsApp, Email, SMS and Web Push campaigns, plus Flows journey trips.</p>
+    </div>
+    <div class="meta" id="mastMeta">
+      <div><b>Report export</b>24 Nov 2026</div>
+      <div><b>Activity window</b>10 Aug – 23 Nov 2026</div>
+      <div><b>Source</b>MoEngage overview export · raw stats</div>
+    </div>
+  </div>
+</header>
+<nav class="tabs" role="tablist" aria-label="Report views"><div class="wrap">
+  <button type="button" role="tab" id="t-ch" aria-selected="true" aria-controls="v-ch">Channel performance</button>
+  <button type="button" role="tab" id="t-run" aria-selected="false" aria-controls="v-ch">Active / running</button>
+  <button type="button" role="tab" id="t-sent" aria-selected="false" aria-controls="v-ch">One-time sent</button>
+  <button type="button" role="tab" id="t-pii" aria-selected="false" aria-controls="v-pii">PII capture</button>
+</div></nav>
+<div id="v-ch" role="tabpanel" aria-labelledby="t-ch">
+
+<div class="bar"><div class="wrap">
+  <span class="lbl">Scope</span>
+  <div class="seg" role="group" aria-label="Campaign group">
+    <button type="button" data-grp="all" aria-pressed="true">All campaigns</button>
+    <button type="button" data-grp="run" aria-pressed="false">Running now</button>
+    <button type="button" data-grp="sent" aria-pressed="false">One-time sent</button>
+    <button type="button" data-grp="off" aria-pressed="false">Paused automations</button>
+  </div>
+  <label class="lbl" for="fEvent">Trigger event</label>
+  <select id="fEvent" aria-label="Trigger event"><option value="all">All events</option></select>
+  <span class="count" id="scopeNote"></span>
+</div></div>
+
+<main class="wrap">
+  <div class="tiles" id="tiles"></div>
+  <section>
+    <div class="sh"><h2>Running now vs sent</h2><p>Running now = Active event-triggered and periodic campaigns. One-time sent = broadcasts. Paused automations = event-triggered or periodic campaigns now paused. Use the Scope buttons above to filter the whole page.</p></div>
+    <div class="card tw" style="padding:6px 8px"><table id="split"></table></div>
+  </section>
+  <section>
+    <div class="sh"><h2>Trigger events in use</h2><p>Each unique MoEngage event that triggers a campaign, how many campaigns use it, and what those campaigns delivered. A campaign with several trigger events is counted under each, so event rows overlap. Click an event to filter the page.</p></div>
+    <div class="card tw" style="padding:6px 8px"><table id="evT"></table></div>
+  </section>
+  <section>
+    <div class="sh"><h2>Channel scorecard</h2><p>Each channel measured on its own funnel. Rates use MoEngage's definitions; email delivery rate counts only sends where delivery events were recorded.</p></div>
+    <div class="card tw" style="padding:6px 8px"><table id="score"></table></div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>Message funnels</h2><p>Bar length is share of messages sent (attempted for Web Push and On-site). Stage names follow each channel's own metric.</p></div>
+    <div class="funnels" id="funnels"></div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>Broadcast calendar</h2><p>One-time WhatsApp and Email broadcasts by send date. Triggered, periodic and Flows sends are excluded because they accrue over time.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="lbl" style="margin-bottom:6px">Messages sent per broadcast day</div>
+        <div class="legend"><span><i class="sw" style="background:var(--c-wa)"></i>WhatsApp</span><span><i class="sw" style="background:var(--c-email)"></i>Email</span></div>
+        <div id="cal"></div>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:6px">Delivery rate per broadcast</div>
+        <div class="legend"><span><i class="sw" style="background:var(--c-wa)"></i>WhatsApp</span><span><i class="sw" style="background:var(--c-email)"></i>Email (tracked sends only)</span></div>
+        <div id="dr"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>What the numbers say</h2><p>Ranked by impact on reach and revenue.</p></div>
+    <div class="find" id="find"></div>
+  </section>
+
+  <section id="explorer">
+    <div class="sh"><h2>Campaign explorer</h2><p>Every campaign and Flows step from the export. Click a column header to sort.</p></div>
+    <div class="ctl">
+      <div id="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <select id="fStatus" aria-label="Status"><option value="">All statuses</option></select>
+      <input type="search" id="fq" placeholder="Search name or flow" aria-label="Search">
+      <label class="ck"><input type="checkbox" id="fz" checked> Hide zero-send rows</label>
+      <span class="count" id="cnt"></span>
+    </div>
+    <div class="scroll"><table id="ex"></table></div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>Flows journeys</h2><p>Trips started and engaged for published journeys with activity in the window (flow analytics cover 10 Aug – 7 Nov).</p></div>
+    <div style="display:grid;gap:16px">
+      <div class="card tw" style="padding:6px 8px"><table id="flows"></table></div>
+      <div class="card tw" style="padding:6px 8px"><table id="flowch"></table></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>Data notes</h2></div>
+    <div class="notes">
+      <p><b>Source.</b> moengage-overview-2026-08-10_to_2026-11-23.xlsx (run 24 Nov 2026). Stats pulled in four windows: 10 Aug–8 Sep, 9 Sep–8 Oct, 9 Oct–7 Nov, 8 Nov–23 Nov. 78 event-triggered, periodic and one-time campaigns; one-time campaigns sent before 10 Aug are excluded.</p>
+      <p><b>WhatsApp.</b> Sent = Sent, Delivered = Delivered, Read = Read. Read rate = read ÷ delivered. Click tracking returns 0 and no WhatsApp campaign has a conversion goal.</p>
+      <p><b>Email.</b> Engagement = unique opens; clicks = unique clicks (summed across windows, so may slightly over-count). Sends with no delivery events are excluded from delivery rate and use sent as the open-rate base.</p>
+      <p><b>Conversions.</b> MoEngage goal Shopify – Item Purchased, view-through attribution, email campaigns only. Five email campaigns carry all 19 conversions.</p>
+      <p><b>Flows.</b> Flow analytics return trips started only (10 Aug – 7 Nov); completions and per-step channel sends are not available.</p>
+      <p><b>Not covered.</b> On-site popups (no stats endpoint). No SMS, in-app or on-site campaign had activity in the window; the two Web Push campaigns had no sends.</p>
+    </div>
+  </section>
+</main>
+</div>
+<div id="v-pii" role="tabpanel" aria-labelledby="t-pii" hidden>
+<main class="wrap">
+  <div class="tiles" id="pTiles"></div>
+  <section>
+    <div class="sh"><h2>New users vs mobile captured, by day</h2><p>New users = first seen that day. Mobile captured = those users who have a mobile number on their profile today. Shaded days are bulk imports.</p></div>
+    <div class="grid2">
+      <div class="card"><div class="lbl" style="margin-bottom:6px">New users per day</div><div class="fig" id="pNew"></div></div>
+      <div class="card"><div class="lbl" style="margin-bottom:6px">Mobile numbers captured per day</div><div class="fig" id="pMob"></div></div>
+    </div>
+  </section>
+  <section>
+    <div class="sh"><h2>PII coverage by funnel segment</h2><p>Share of users in each MoEngage segment who have an email or mobile number on their profile. Pick a month.</p></div>
+    <div class="seg" id="mSeg" role="group" aria-label="Month" style="margin-bottom:12px">
+      <button type="button" data-m="Aug10-Aug31" aria-pressed="false">Aug (10–31)</button>
+      <button type="button" data-m="Sep1-Sep30" aria-pressed="false">Sep</button>
+      <button type="button" data-m="Oct1-Oct31" aria-pressed="true">Oct</button>
+      <button type="button" data-m="Nov1-Nov30" aria-pressed="false">Nov (to 23rd)</button>
+      <button type="button" data-m="all" aria-pressed="false">All months</button>
+    </div>
+    <div class="card tw" style="padding:6px 8px"><table id="segT"></table></div>
+    <p class="mk" id="segNote" style="margin-top:8px"></p>
+  </section>
+  <section>
+    <div class="sh"><h2>What the numbers say</h2></div>
+    <div class="find" id="pFind"></div>
+  </section>
+  <section>
+    <div class="sh"><h2>Weekly view</h2><p>Weeks start Monday. Organic excludes the two bulk-import days.</p></div>
+    <div class="card tw" style="padding:6px 8px"><table id="pWeek"></table></div>
+  </section>
+  <section>
+    <div class="sh"><h2>Data notes</h2></div>
+    <div class="notes">
+      <p><b>Source.</b> pii-capture-trend-2026-11-23.xlsx, pulled from MoEngage user profiles. Dates are first-seen dates in Asia/Kolkata, 10 Aug – 23 Nov 2026.</p>
+      <p><b>Mobile captured.</b> Profiles that currently hold a Mobile Number (Standard). This is today's status, not status at sign-up, so recent days can read slightly low.</p>
+      <p><b>Segment coverage.</b> segment_pii_coverage_report.csv: MoEngage “PII-Report” segments by month (10–31 Aug, Sep, Oct, Nov to date). Coverage = users with that field ÷ users in the segment.</p>
+      <p><b>Bulk imports.</b> 9 Oct (2,169 mobiles vs ~50 on a normal day) and 19 Nov (3,488 of 3,490 new users with mobile) look like list uploads, not on-site capture. They are shown separately as “organic”.</p>
+    </div>
+  </section>
+</main>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const ROWS=[["C","Email","absorbtion_education_email","","Active","Event triggered","2026-08-09",57,52,0,18,2,0,0,0,0,0,["Removed from Cart"]],["C","Email","brand_led_welcome","","Sent","One time","2026-08-09",0,0,0,1,1,0,0,0,0,0,[]],["C","Email","welcome_email","","Active","Event triggered","2026-08-09",42,40,40,11,0,0,0,0,0,0,["Customer Logged In"]],["C","Email","product_search","","Active","Event triggered","2026-08-10",16,16,16,3,0,0,0,0,0,0,["Product Searched"]],["C","Email","spunge_education_blog_v1","","Sent","One time","2026-08-14",55,55,50,19,2,0,0,0,5,0,[]],["C","Email","email_campaign_sale","","Sent","One time","2026-08-30",67,64,62,15,7,0,0,0,1,2,[]],["C","Email","order_not_placed_new_users","","Paused","Periodic","2026-09-07",967,863,0,142,7,0,0,0,0,0,[]],["C","Email","periodic_fish_oil","","Active","Periodic","2026-09-07",1001,973,953,185,2,0,0,0,20,1,[]],["C","Email","order_not_placed_new_users","","Active","Periodic","2026-09-08",0,0,0,0,0,0,0,0,0,0,[]],["C","Email","ganesh_chaturthi_sale_launch","","Sent","One time","2026-09-14",143,138,133,30,3,0,0,0,5,0,[]],["C","Email","ganesh_chaturthi_sale_launch_v2","","Sent","One time","2026-09-14",143,134,0,39,1,0,0,0,0,0,[]],["C","Email"," ganesh_chaturthi_sale_launch_day2","","Sent","One time","2026-09-15",159,150,148,21,0,0,0,0,2,0,[]],["C","Email","mid_day_sale_ganpati_email","","Sent","One time","2026-09-20",260,249,0,69,3,0,0,0,0,0,[]],["C","Email","mid_day_sale_day7_ganpati","","Stopped","One time","2026-09-21",293,199,191,35,0,0,0,0,8,0,[]],["C","Email","last hour sale_email","","Sent","One time","2026-09-25",443,430,416,111,1,0,0,0,14,1,[]],["C","Email","last hour sale_email-2nd time","","Sent","One time","2026-09-25",450,411,0,87,6,0,0,0,0,1,[]],["C","Email","Duplicate - email_world_heart_day","","Sent","One time","2026-09-29",577,558,543,80,3,0,0,0,15,0,[]],["C","Email","email_world_heart_day","","Sent","One time","2026-09-29",575,558,542,94,4,0,0,0,16,0,[]],["C","Email","creatine_specific_product","","Active","Event triggered","2026-10-05",17,16,14,2,1,0,0,0,2,0,["Product Viewed","Shopify - Add To Cart","Shopify - Checkout Updated"]],["C","Email","fish_oil_specific_product","","Active","Event triggered","2026-10-05",681,622,593,111,1,3674,6,6,28,1,["Shopify - Add To Cart","Started_Checkout_GK","Product Viewed"]],["C","Email","glutathione_specific_product","","Active","Event triggered","2026-10-05",44,41,40,5,0,0,0,0,1,0,["Shopify - Add To Cart","Started_Checkout_GK","Shopify - Item Purchased"]],["C","Email","veg-omega_algal_specific_product","","Active","Event triggered","2026-10-05",88,78,75,17,0,4114,6,6,3,0,["Shopify - Add To Cart","Started_Checkout_GK","Product Viewed"]],["C","Email","omega_algal_oil","","Sent","One time","2026-10-09",655,641,625,144,1,559,1,1,15,4,[]],["C","Email","algal_oil_promotion_navratri","","Sent","One time","2026-10-12",1050,1014,985,236,2,559,1,1,30,4,[]],["C","Email","algal_oil_promotion_navratri_v1","","Sent","One time","2026-10-13",1023,992,986,209,1,2915,5,5,25,2,[]],["C","Email","algal_oil_promotion_navratri_last_day","","Sent","One time","2026-10-16",1187,1134,1105,217,1,0,0,0,28,1,[]],["C","Email","spunge_education_blog1","","Sent","One time","2026-10-22",1227,1180,1153,233,7,0,0,0,27,2,[]],["C","Email","review_before_26october","","Active","Event triggered","2026-10-27",6,6,6,3,1,0,0,0,0,0,["Order Completed"]],["C","Email","spunge_review_email","","Active","Event triggered","2026-10-27",45,43,43,7,2,0,0,0,0,0,["Order Completed"]],["C","Email","diwali","","Stopped","One time","2026-11-05",1509,981,957,176,2,0,0,0,24,3,[]],["C","Email","diwali_day_spunge","","Sent","One time","2026-11-08",1509,1436,1402,250,5,0,0,0,33,5,[]],["C","Web Push","test_push_notofications1","","Paused","Periodic","2026-07-14",0,0,0,0,0,0,0,0,0,0,[]],["C","Web Push","event_triggered_test_notification","","Paused","Event triggered","2026-07-15",0,0,0,0,0,0,0,0,0,0,["MOE_PAGE_VIEWED","MOE_WEB_OPTIN_ACCEPTED","MOE_APP_OPENED"]],["C","WhatsApp","Duplicate - on-site _whatsapp","","Paused","Event triggered","2026-07-24",0,0,0,0,0,0,0,0,0,0,["MOE_ONSITE_MESSAGE_CLICKED"]],["C","WhatsApp","on-site _whatsapp","","Paused","Event triggered","2026-07-24",0,0,0,0,0,0,0,0,0,0,["MOE_ONSITE_MESSAGE_CLICKED"]],["C","WhatsApp","Duplicate - Duplicate - on-site _whatsapp","","Paused","Event triggered","2026-07-27",0,0,0,0,0,0,0,0,0,0,["MOE_ONSITE_MESSAGE_CLICKED","MOE_ONSITE_MESSAGE_SHOWN"]],["C","WhatsApp","abandoned_cart_whatsapp","","Paused","Event triggered","2026-08-06",5,5,3,3,0,0,0,0,0,0,["Add To Cart"]],["C","WhatsApp","Customer Registered","","Paused","Event triggered","2026-08-10",69,69,22,16,0,0,0,0,0,0,["Add To Cart"]],["C","WhatsApp","Order Placed","","Active","Event triggered","2026-08-10",0,0,0,0,0,0,0,0,0,0,["Order Placed"]],["C","WhatsApp","Product Viewed","","Active","Event triggered","2026-08-10",0,0,0,0,0,0,0,0,0,0,["Product Viewed"]],["C","WhatsApp","POT_ativation_offer","","Sent","One time","2026-08-12",4,4,2,1,0,0,0,0,0,0,[]],["C","WhatsApp","Reorder_reminder","","Paused","Periodic","2026-08-12",25,25,12,9,0,0,0,0,0,0,[]],["C","WhatsApp","launch event whatsapp","","Sent","One time","2026-08-12",83,82,50,34,0,0,0,0,0,0,[]],["C","WhatsApp","Duplicate - Reorder_reminder","","Paused","Periodic","2026-08-13",31,31,9,9,0,0,0,0,0,0,[]],["C","WhatsApp","last_few_hours_left - launch event whatsapp","","Sent","One time","2026-08-13",83,82,58,39,0,0,0,0,0,0,[]],["C","WhatsApp","not_purchased_registered_users","","Active","Periodic","2026-08-13",94,100,38,8,0,0,0,0,0,0,[]],["C","WhatsApp","abandoned_cart_whatsapp_v1","","Paused","Event triggered","2026-08-14",3,3,0,0,0,0,0,0,0,0,["Add To Cart"]],["C","WhatsApp","abandoned_cart_whatsapp_v2","","Active","Event triggered","2026-08-19",169,164,21,19,0,0,0,0,0,0,["Add To Cart"]],["C","WhatsApp","rakshabandhan_day_sale_day1","","Sent","One time","2026-08-27",168,121,70,51,0,0,0,0,0,0,[]],["C","WhatsApp","rakshabandhan_day_sale_day2","","Sent","One time","2026-08-28",168,121,67,40,0,0,0,0,0,0,[]],["C","WhatsApp","rakshabandhan_day_sale_day3","","Sent","One time","2026-08-29",168,121,64,37,0,0,0,0,0,0,[]],["C","WhatsApp","last_day_sale_rakshabandhan","","Sent","One time","2026-08-30",175,127,63,32,0,0,0,0,0,0,[]],["C","WhatsApp","Reorder_reminder_last_30_days","","Active","Periodic","2026-09-02",8,8,0,0,0,0,0,0,0,0,[]],["C","WhatsApp","payment_method_selected","","Active","Event triggered","2026-09-02",77,77,0,0,0,0,0,0,0,0,["Payment_Method_Selected_GK"]],["C","WhatsApp","updated_cart_trigger","","Active","Event triggered","2026-09-02",9,9,0,0,0,0,0,0,0,0,["Update Cart"]],["C","WhatsApp","new_users","","Sent","One time","2026-09-04",95,93,69,41,0,0,0,0,0,0,[]],["C","WhatsApp","first_time_fish_oil","","Active","Periodic","2026-09-11",448,448,113,65,0,0,0,0,0,0,[]],["C","WhatsApp","first_time_gluta_last_20","","Active","Periodic","2026-09-11",12,19,2,1,0,0,0,0,0,0,[]],["C","WhatsApp","creatine_first_time_bought","","Active","Event triggered","2026-09-14",21,21,9,7,0,0,0,0,0,0,["Shopify - Item Purchased"]],["C","WhatsApp","ganesh_chaturthi_first_day_sale","","Sent","One time","2026-09-14",283,236,118,75,0,0,0,0,0,0,[]],["C","WhatsApp","abandoned_cart_ganesh_chaturthi","","Paused","Event triggered","2026-09-16",9569,415,102,70,0,0,0,0,0,0,["Shopify - Add To Cart"]],["C","WhatsApp","active_users_ganesh_chaturthi","","Sent","One time","2026-09-16",61,60,25,16,0,0,0,0,0,0,[]],["C","WhatsApp","never_bought_ganesh_chaturthi","","Sent","One time","2026-09-16",242,203,80,48,0,0,0,0,0,0,[]],["C","WhatsApp","reorder_ganesh_chaturthi","","Sent","One time","2026-09-17",20,20,11,5,0,0,0,0,0,0,[]],["C","WhatsApp","lapsed_60_ganesh_chaturthi","","Sent","One time","2026-09-20",332,293,70,35,0,0,0,0,0,0,[]],["C","WhatsApp","mid_day_sale_ganesh_chaturthi","","Sent","One time","2026-09-20",429,381,93,49,0,0,0,0,0,0,[]],["C","WhatsApp","visarjan_mid_day_sale","","Sent","One time","2026-09-21",469,421,149,72,0,0,0,0,0,0,[]],["C","WhatsApp","last_1_day_ganesh_sale","","Sent","One time","2026-09-25",594,546,156,81,0,0,0,0,0,0,[]],["C","WhatsApp","coa_lookup_after-delivery","","Active","Event triggered","2026-09-29",471,465,39,13,0,0,0,0,0,0,["Shopify - Item Purchased","Payment_Complete_GK"]],["C","WhatsApp","world_heart_day_day1","","Sent","One time","2026-09-29",754,706,168,88,0,0,0,0,0,0,[]],["C","WhatsApp","spunge_bot_welcome_message_v1","","Sent","One time","2026-10-09",2117,2117,1369,676,0,0,0,0,0,0,[]],["C","WhatsApp","algal_navratri_promotion_spunge","","Sent","One time","2026-10-12",1427,1346,429,221,0,0,0,0,0,0,[]],["C","WhatsApp","spunge_algal_oil_promotion","","Sent","One time","2026-10-12",3544,3427,337,177,0,0,0,0,0,0,[]],["C","WhatsApp","coa_order_placed","","Sent","One time","2026-10-27",485,484,111,59,0,0,0,0,0,0,[]],["C","WhatsApp","order_completed_leave_review","","Active","Event triggered","2026-10-28",45,45,0,0,0,0,0,0,0,0,["Order Completed"]],["C","WhatsApp"," spunge_bot_welcome_message_v2","","Sent","One time","2026-11-19",676,676,416,125,0,0,0,0,0,0,[]],["C","WhatsApp","abandoned_cart_whatsapp_v1","","Active","Event triggered","2026-11-19",0,0,0,0,0,0,0,0,0,0,["Add To Cart","Shopify - Add To Cart"]],["C","WhatsApp","spunge_bot_welcome_message_v2","","Sent","One time","2026-11-19",19,19,12,5,0,0,0,0,0,0,[]]];
+const FLOWS=[["T3_Started_Checkout","Version 3","Active","2026-09-07",13308,425],["Duplicate - Abandoned Cart Reminder - Single Channel","Version 4","Stopped","2026-08-19",92,17]];
+
+const CH={WhatsApp:{c:'--c-wa',e:'Read',base:'Sent'},Email:{c:'--c-email',e:'Opened',base:'Sent'},'Web Push':{c:'--c-push',e:'Shown',base:'Attempted'},'On-site':{c:'--c-site',e:'Shown',base:'Attempted'},SMS:{c:'--c-sms',e:'—',base:'Sent'}};
+const ORDER=['WhatsApp','Email','Web Push','SMS'];
+// row: 0 src,1 ch,2 name,3 flow,4 status,5 dtype,6 date,7 att,8 sent,9 del,10 eng,11 clk,12 rev,13 convUsers,14 orders,15 bounce,16 unsub
+const R=ROWS.map(r=>{const o={src:r[0],ch:r[1],name:r[2],flow:r[3],status:r[4],dtype:r[5],date:r[6],att:r[7],sent:r[8],del:r[9],eng:r[10],clk:r[11],rev:r[12],conv:r[13],ord:r[14],bounce:r[15],unsub:r[16],ev:r[17]||[]};o.evs=o.ev.join(', ');
+  o.untracked=o.ch==='Email'&&o.sent>0&&o.del===0; o.dbase=o.untracked?o.sent:o.del; o.grp=o.dtype==='One time'?'sent':(o.status==='Active'?'run':'off'); return o;});
+const GRP={run:'Running now',sent:'One-time sent',off:'Paused automations'};
+const fmt=n=>n.toLocaleString('en-IN'); const pct=(a,b)=>b>0?a/b*100:null; const pf=v=>v==null?'<span class="na">–</span>':(v>=10||v===0?v.toFixed(1):v.toFixed(2))+'%';
+const inr=n=>'₹'+fmt(Math.round(n));
+const cssv=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+let SCOPE='all';
+let EVENT='all';const inScope=r=>(SCOPE==='all'||r.grp===SCOPE)&&(EVENT==='all'||(EVENT==='none'?!r.ev.length:r.ev.includes(EVENT)));
+
+function agg(rows){const a={att:0,sent:0,del:0,dbase:0,trSent:0,eng:0,clk:0,rev:0,conv:0,ord:0,n:0,live:0,bounce:0,unsub:0};
+  rows.forEach(r=>{a.n++;if(r.sent>0||r.att>0)a.live++;a.att+=r.att;a.sent+=r.sent;a.dbase+=r.dbase;if(!r.untracked){a.del+=r.del;a.trSent+=r.sent}a.eng+=r.eng;a.clk+=r.clk;a.rev+=r.rev;a.conv+=r.conv;a.ord+=r.ord;a.bounce+=r.bounce;a.unsub+=r.unsub});return a;}
+function chMetrics(ch,a){
+  if(ch==='WhatsApp')return{reach:a.sent,dr:pct(a.del,a.sent),er:pct(a.eng,a.del),ctr:null,ctrNote:'not tracked'};
+  if(ch==='Email')return{reach:a.sent,dr:pct(a.del,a.trSent),er:pct(a.eng,a.dbase),ctr:pct(a.clk,a.dbase)};
+  if(ch==='SMS')return{reach:a.sent,dr:pct(a.del,a.sent),er:null,ctr:pct(a.clk,a.del)};
+  return{reach:a.att,dr:pct(a.sent,a.att),er:pct(a.eng,a.sent),ctr:pct(a.clk,a.eng)};
+}
+function tiles(){const rows=R.filter(inScope);const by={};ORDER.forEach(c=>by[c]=agg(rows.filter(r=>r.ch===c)));
+  const out=['WhatsApp','Email','SMS','Web Push'];
+  const sent=out.reduce((s,c)=>s+by[c].sent,0);
+  const del=by.WhatsApp.del+by.Email.del+by.SMS.del+by['Web Push'].sent;
+  const delBase=by.WhatsApp.sent+by.Email.trSent+by.SMS.sent+by['Web Push'].sent;
+  const eng=by.WhatsApp.eng+by.Email.eng+by['Web Push'].eng;
+  const clk=ORDER.reduce((s,c)=>s+by[c].clk,0);
+  const all=agg(rows);
+  const T=[
+    ['Messages sent',fmt(sent),'WhatsApp, Email, SMS, Web Push'],
+    ['Delivered',fmt(del),pf(pct(del,delBase))+' of tracked sends'],
+    ['Read / opened / shown',fmt(eng),'WhatsApp reads, email opens, push impressions'],
+    ['Campaigns with sends',fmt(all.live),'of '+fmt(all.n)+' campaigns in the window'],
+    ['Clicks',fmt(clk),'WhatsApp clicks not tracked'],
+    ['Attributed revenue',inr(all.rev),all.ord+' conversions · view-through, email goals'],
+  ];
+  document.getElementById('tiles').innerHTML=T.map(t=>`<div class="tile"><div class="lbl">${t[0]}</div><div class="v">${t[1]}</div><div class="s">${t[2]}</div></div>`).join('');
+  document.getElementById('scopeNote').textContent=`${fmt(all.live)} of ${fmt(all.n)} campaigns have sends`+(SCOPE==='run'?' · Active event-triggered and periodic':SCOPE==='sent'?' · broadcasts sent once':SCOPE==='off'?' · paused event-triggered and periodic':'');
+}
+function rateCell(v,ch){if(v==null)return'<span class="na">–</span>';return`<span class="rate">${pf(v)}<i><s style="width:${Math.min(100,v)}%;background:var(${CH[ch].c})"></s></i></span>`}
+function score(){const rows=R.filter(inScope);
+  let h=`<thead><tr><th class="l">Channel</th><th>Live rows</th><th>Attempted</th><th>Sent</th><th>Delivered</th><th>Delivery rate</th><th>Read/open/shown</th><th>Engage rate</th><th>Clicks</th><th>CTR</th><th>Revenue</th></tr></thead><tbody>`;
+  ORDER.forEach(ch=>{const a=agg(rows.filter(r=>r.ch===ch));const m=chMetrics(ch,a);
+    const delv=ch==='Web Push'||ch==='On-site'?a.sent:a.del;
+    h+=`<tr><td><i class="sw" style="background:var(${CH[ch].c})"></i><b>${ch}</b></td><td>${a.live} / ${a.n}</td><td>${fmt(a.att)}</td><td>${fmt(a.sent)}</td><td>${fmt(delv)}</td><td>${rateCell(m.dr,ch)}</td><td>${ch==='SMS'?'<span class="na">–</span>':fmt(a.eng)}</td><td>${rateCell(m.er,ch)}</td><td>${ch==='WhatsApp'?'<span class="na">not tracked</span>':fmt(a.clk)}</td><td>${ch==='WhatsApp'?'<span class="na">–</span>':pf(m.ctr)}</td><td>${a.rev?inr(a.rev):'<span class="na">–</span>'}</td></tr>`});
+  {const a=agg(rows);h+=`<tr style="font-weight:700;background:var(--surface-2)"><td><b>Total</b></td><td>${a.live} / ${a.n}</td><td>${fmt(a.att)}</td><td>${fmt(a.sent)}</td><td>${fmt(a.del)}</td><td>${pf(pct(a.del,a.trSent))}</td><td>${fmt(a.eng)}</td><td>${pf(pct(a.eng,a.dbase))}</td><td>${fmt(a.clk)}</td><td>${pf(pct(a.clk,a.dbase))}</td><td>${a.rev?inr(a.rev):'–'}</td></tr>`}
+  document.getElementById('score').innerHTML=h+'</tbody>';
+}
+function funnels(){const rows=R.filter(inScope);
+  document.getElementById('funnels').innerHTML=ORDER.map(ch=>{const a=agg(rows.filter(r=>r.ch===ch));let st,foot;
+    if(ch==='WhatsApp'){st=[['Sent',a.sent],['Delivered',a.del],['Read',a.eng],['Clicked',null]];foot='Click tracking returns 0 on every WhatsApp row.'}
+    else if(ch==='Email'){st=[['Sent',a.sent],['Delivered',a.del],['Opened',a.eng],['Clicked',a.clk]];foot=`Delivered excludes ${fmt(a.sent-a.trSent)} sends with no delivery events.`}
+    else if(ch==='SMS'){st=[['Sent',a.sent],['Delivered',a.del],['Clicked',a.clk]];foot='Test sends only.'}
+    else{st=[['Attempted',a.att],[ch==='On-site'?'Displayed':'Sent',a.sent],['Shown',a.eng],['Clicked',a.clk]];if(ch==='On-site')st.splice(1,1);foot=ch==='Web Push'?`${fmt(a.att-a.sent)} attempts failed at the push service.`:'Popup display to click.'}
+    const base=st[0][1]||1;
+    return `<div class="fn"><h3><i class="sw" style="background:var(${CH[ch].c})"></i>${ch}</h3>${st.map(s=>{const p=s[1]==null?null:s[1]/base*100;
+      return `<div class="row"><span>${s[0]}</span><span class="t">${p==null?'':`<b style="width:${Math.max(p,0)}%;background:var(${CH[ch].c})"></b>`}</span><span class="n">${s[1]==null?'<span class="na">n/a</span>':fmt(s[1])+`<small>${p.toFixed(p<10&&p>0?1:0)}%</small>`}</span></div>`}).join('')}<div class="foot">${a.sent===0&&a.att===0?'No sends in this scope.':foot}</div></div>`}).join('');
+}
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8),y=Math.min(e.clientY+14,innerHeight-tip.offsetHeight-8);tip.style.left=x+'px';tip.style.top=y+'px'}
+function hideTip(){tip.hidden=true}
+const BC=R.filter(r=>r.src==='C'&&r.dtype==='One time'&&r.sent>0&&(r.ch==='WhatsApp'||r.ch==='Email'));
+const dfmt=d=>new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+function calChart(){const el=document.getElementById('cal');const days=[...new Set(BC.map(r=>r.date))].sort();
+  const data=days.map(d=>({d,wa:BC.filter(r=>r.date===d&&r.ch==='WhatsApp'),em:BC.filter(r=>r.date===d&&r.ch==='Email')}));
+  data.forEach(x=>{x.w=x.wa.reduce((s,r)=>s+r.sent,0);x.e=x.em.reduce((s,r)=>s+r.sent,0)});
+  const W=Math.max(el.clientWidth,300),H=260,m={l:44,r:8,t:10,b:44};const iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const mx=Math.max(...data.map(x=>Math.max(x.w,x.e)));const stp=mx>2000?1000:250;const max=Math.ceil(mx/stp)*stp;const y=v=>m.t+ih-v/max*ih;
+  const gw=iw/data.length;const bw=Math.max(3,Math.min(14,(gw-6)/2));
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Sends per broadcast day">`;
+  for(let v=0;v<=max;v+=stp){s+=`<line class="${v?'gr':'ax'}" x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`}
+  data.forEach((x,i)=>{const cx=m.l+gw*i+gw/2;
+    [[x.w,'--c-wa',-1,x.wa,'WhatsApp'],[x.e,'--c-email',1,x.em,'Email']].forEach(([v,c,side,rs,nm])=>{if(!v)return;const bx=cx+(side<0?-bw-1:1);const yy=y(v);const hh=m.t+ih-yy;
+      s+=`<path d="M${bx},${m.t+ih}V${yy+Math.min(3,hh)}q0,-3 3,-3h${bw-6}q3,0 3,3V${m.t+ih}Z" fill="var(${c})" data-t="${encodeURIComponent(`<b>${dfmt(x.d)} · ${nm}</b><br>${rs.map(r=>r.name+': '+fmt(r.sent)).join('<br>')}`)}"/>`;
+      s+=`<rect x="${bx-2}" y="${m.t}" width="${bw+4}" height="${ih}" fill="transparent" data-t="${encodeURIComponent(`<b>${dfmt(x.d)} · ${nm}</b><br>${rs.map(r=>r.name+': '+fmt(r.sent)).join('<br>')}`)}"/>`});
+    if(i%Math.ceil(data.length/ (W<500?6:11))===0)s+=`<text x="${cx}" y="${H-m.b+16}" text-anchor="middle">${dfmt(x.d)}</text>`});
+  // festival bands
+  [['Rakhi','2026-08-27','2026-08-30'],['Ganesh','2026-09-14','2026-09-25'],['Navratri','2026-10-12','2026-10-16'],['Diwali','2026-11-05','2026-11-08']].forEach(([n,a,b])=>{const i0=days.indexOf(a),i1=days.lastIndexOf(b);if(i0<0||i1<0)return;const x0=m.l+gw*i0+2,x1=m.l+gw*(i1+1)-2;
+    s+=`<line x1="${x0}" x2="${x1}" y1="${H-14}" y2="${H-14}" stroke="var(--line-strong)" stroke-width="2"/><text x="${(x0+x1)/2}" y="${H-2}" text-anchor="middle">${n}</text>`});
+  el.innerHTML=s+'</svg>';bindTips(el);
+}
+function drChart(){const el=document.getElementById('dr');const pts=BC.filter(r=>!r.untracked).map(r=>({...r,v:r.del/r.sent*100})).sort((a,b)=>a.date.localeCompare(b.date));
+  const days=[...new Set(BC.map(r=>r.date))].sort();
+  const W=Math.max(el.clientWidth,300),H=260,m={l:44,r:12,t:10,b:44};const iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const t0=new Date(days[0]).getTime(),t1=new Date(days[days.length-1]).getTime();const x=d=>m.l+(new Date(d).getTime()-t0)/(t1-t0)*iw;const y=v=>m.t+ih-v/100*ih;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Delivery rate per broadcast">`;
+  for(let v=0;v<=100;v+=25)s+=`<line class="${v?'gr':'ax'}" x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${v}%</text>`;
+  const months=['2026-08-15','2026-09-01','2026-09-15','2026-10-01','2026-10-15','2026-11-01','2026-11-15'];months.forEach(d=>{const xx=x(d);if(xx>m.l&&xx<W-m.r)s+=`<text x="${xx}" y="${H-m.b+16}" text-anchor="middle">${dfmt(d)}</text>`});
+  ['WhatsApp','Email'].forEach(ch=>{const p=pts.filter(q=>q.ch===ch);const c=ch==='WhatsApp'?'--c-wa':'--c-email';
+    s+=`<path d="${p.map((q,i)=>(i?'L':'M')+x(q.date).toFixed(1)+','+y(q.v).toFixed(1)).join('')}" fill="none" stroke="var(${c})" stroke-width="2" stroke-linejoin="round" opacity=".55"/>`;
+    p.forEach(q=>{s+=`<circle cx="${x(q.date)}" cy="${y(q.v)}" r="4.5" fill="var(${c})" stroke="var(--surface)" stroke-width="2"/><circle cx="${x(q.date)}" cy="${y(q.v)}" r="12" fill="transparent" data-t="${encodeURIComponent(`<b>${q.name}</b><br>${ch} · ${dfmt(q.date)}<br>${fmt(q.del)} of ${fmt(q.sent)} delivered (${q.v.toFixed(1)}%)`)}"/>`})});
+  const wa=pts.filter(q=>q.ch==='WhatsApp');const last=wa[wa.length-1];
+  s+=`<text x="${x(last.date)-8}" y="${y(last.v)+18}" text-anchor="end" style="fill:var(--ink-2);font-weight:600">${last.v.toFixed(0)}%</text>`;
+  const first=wa.find(q=>q.sent>20);s+=`<text x="${x(first.date)-8}" y="${y(first.v)-10}" text-anchor="end" style="fill:var(--ink-2);font-weight:600">${first.v.toFixed(0)}%</text>`;
+  el.innerHTML=s+'</svg>';bindTips(el);
+}
+function bindTips(el){el.querySelectorAll('[data-t]').forEach(n=>{n.addEventListener('mousemove',e=>showTip(e,decodeURIComponent(n.dataset.t)));n.addEventListener('mouseleave',hideTip)})}
+
+function findings(){const C=R.filter(r=>r.src==='C');
+  const wa=agg(C.filter(r=>r.ch==='WhatsApp')),em=agg(C.filter(r=>r.ch==='Email')),pu=agg(C.filter(r=>r.ch==='Web Push')),all=agg(C);
+  const waB=BC.filter(r=>r.ch==='WhatsApp'&&r.sent>=50);const ea=agg(waB.filter(r=>r.date<'2026-09-01')),la=agg(waB.filter(r=>r.date>='2026-10-01'));
+  const top=C.filter(r=>r.ch==='WhatsApp').sort((a,b)=>(b.att-b.sent)-(a.att-a.sent))[0];
+  const emB=agg(BC.filter(r=>r.ch==='Email'));
+  const cartN=['fish_oil_specific_product','veg-omega_algal_specific_product','glutathione_specific_product','creatine_specific_product'];
+  const ce=agg(C.filter(r=>cartN.includes(r.name)));
+  const F=[
+   ['--crit','Reach','Most WhatsApp messages never land',`Campaign WhatsApp delivered <b>${pf(pct(wa.del,wa.sent))}</b> (${fmt(wa.del)} of ${fmt(wa.sent)}). Broadcast delivery fell from <b>${pf(pct(ea.del,ea.sent))}</b> in August to <b>${pf(pct(la.del,la.sent))}</b> from October as audiences grew. Check Meta marketing-message limits, number quality rating and invalid numbers in each segment.`],
+   ['--crit','Reach',`${top.name} lost ${fmt(top.att-top.sent)} messages`,`It attempted <b>${fmt(top.att)}</b> and sent only <b>${fmt(top.sent)}</b> (${pf(pct(top.att-top.sent,top.att))} failed) before it was paused. Fix template and opt-in before reusing it.${pu.att?` Web Push shows the same pattern: <b>${fmt(pu.att)}</b> attempts, <b>${fmt(pu.sent)}</b> accepted.`:''}`],
+   ['--serious','Tracking','WhatsApp clicks and revenue are not measured',`Every WhatsApp row reports 0 clicks and no WhatsApp campaign has a purchase goal, so all <b>${inr(all.rev)}</b> of attributed revenue comes from email. Add click tracking on CTA links and the Shopify purchase goal to every WhatsApp campaign.`],
+   ['--serious','Engagement','Email broadcasts get opened, not clicked',`One-time emails reach a <b>${pf(pct(emB.eng,emB.dbase))}</b> open rate but only <b>${pf(pct(emB.clk,emB.dbase))}</b> click. Test offer-led subject lines and a single, above-the-fold CTA.`],
+   ['--good','Working','Product cart emails are the best converters',`The 4 product-specific cart emails sent <b>${fmt(ce.sent)}</b> messages for <b>${ce.ord}</b> conversions and <b>${inr(ce.rev)}</b> (${pf(pct(ce.rev,all.rev))} of attributed revenue from ${pf(pct(ce.sent,em.sent))} of email volume). Extend to every SKU.`],
+   ['--good','Working','WhatsApp is read when it arrives',`<b>${pf(pct(wa.eng,wa.del))}</b> of delivered campaign messages were read, against a <b>${pf(pct(em.eng,em.dbase))}</b> email open rate. Fixing WhatsApp delivery is the biggest lever.`],
+  ];
+  document.getElementById('find').innerHTML=F.map(f=>`<div class="fi" style="--sev:var(${f[0]})"><span class="tag">${f[1]}</span><h3>${f[2]}</h3><p>${f[3]}</p></div>`).join('');
+}
+
+// Explorer
+const sel={ch:new Set(ORDER)};let sortK='sent',sortD=-1;
+const COLS=[['name','Campaign','l'],['ch','Channel','l'],['status','Status','l'],['dtype','Type','l'],['grp','Group','l'],['evs','Trigger event','l'],['date','Start date','l'],['sent','Sent'],['del','Delivered'],['drate','Del. rate'],['eng','Read / open / shown'],['erate','Engage rate'],['clk','Clicks'],['rev','Revenue']];
+R.forEach(r=>{r.drate=r.ch==='Web Push'||r.ch==='On-site'?pct(r.sent,r.att):(r.untracked?null:pct(r.del,r.sent));r.erate=r.ch==='SMS'?null:(r.ch==='Web Push'||r.ch==='On-site'?pct(r.eng,r.sent):pct(r.eng,r.dbase));r.delv=r.ch==='Web Push'||r.ch==='On-site'?r.sent:r.del});
+function buildCtl(){document.getElementById('chips').innerHTML=ORDER.map(c=>`<button type="button" class="chip" data-ch="${c}" aria-pressed="true"><i class="sw" style="background:var(${CH[c].c})"></i>${c}</button>`).join('');
+  document.querySelectorAll('#chips .chip').forEach(b=>b.onclick=()=>{const c=b.dataset.ch;sel.ch.has(c)?sel.ch.delete(c):sel.ch.add(c);b.setAttribute('aria-pressed',sel.ch.has(c));explorer()});
+  const st=[...new Set(R.map(r=>r.status))].sort();document.getElementById('fStatus').innerHTML+=st.map(s=>`<option>${s}</option>`).join('');
+  ['fStatus','fq','fz'].forEach(id=>document.getElementById(id).addEventListener('input',explorer));}
+function explorer(){const q=document.getElementById('fq').value.toLowerCase(),st=document.getElementById('fStatus').value,hz=document.getElementById('fz').checked;
+  let rows=R.filter(r=>inScope(r)&&sel.ch.has(r.ch)&&(!st||r.status===st)&&(!hz||r.sent>0||r.att>0)&&(!q||(r.name+' '+r.flow).toLowerCase().includes(q)));
+  rows.sort((a,b)=>{let x=sortK==='del'?a.delv:a[sortK],y=sortK==='del'?b.delv:b[sortK];if(x==null)x=-1;if(y==null)y=-1;return typeof x==='string'?x.localeCompare(y)*sortD:(x-y)*sortD});
+  let h='<thead><tr>'+COLS.map(c=>`<th class="${c[2]||''}"><button type="button" data-k="${c[0]}" ${c[0]===sortK?`data-dir="${sortD<0?'↓':'↑'}"`:''}>${c[1]}</button></th>`).join('')+'</tr></thead><tbody>';
+  rows.forEach(r=>{h+=`<tr><td class="nm" title="${r.name}"><b>${r.name}</b>${r.flow?`<span class="sub">Flow · ${r.flow}</span>`:''}</td><td class="l"><i class="sw" style="background:var(${CH[r.ch].c})"></i>${r.ch}</td><td class="l"><span class="pill ${['Active','Sent'].includes(r.status)?'on':''}">${r.status}</span></td><td class="l">${r.src==='F'?'Flows':r.dtype}</td><td class="l">${GRP[r.grp]}</td><td class="l" style="max-width:220px;white-space:normal;font-size:12px">${r.evs||'<span class="na">–</span>'}</td><td class="l">${r.date?dfmt(r.date):'<span class="na">–</span>'}</td><td>${fmt(r.ch==='Web Push'||r.ch==='On-site'?r.att:r.sent)}</td><td>${r.untracked?'<span class="na" title="No delivery events recorded">n/r</span>':fmt(r.delv)}</td><td>${pf(r.drate)}</td><td>${r.ch==='SMS'?'<span class="na">–</span>':fmt(r.eng)}</td><td>${pf(r.erate)}</td><td>${r.ch==='WhatsApp'?'<span class="na">–</span>':fmt(r.clk)}</td><td>${r.rev?inr(r.rev):'<span class="na">–</span>'}</td></tr>`});
+  if(rows.length){const a=agg(rows);h+=`<tr style="font-weight:700;background:var(--surface-2)"><td class="nm">Total · ${rows.length} campaigns</td><td></td><td></td><td></td><td></td><td></td><td></td><td>${fmt(rows.reduce((s,r)=>s+(r.ch==='Web Push'||r.ch==='On-site'?r.att:r.sent),0))}</td><td>${fmt(rows.reduce((s,r)=>s+(r.untracked?0:(r.delv||0)),0))}</td><td>${pf(pct(a.del,a.trSent))}</td><td>${fmt(a.eng)}</td><td>${pf(pct(a.eng,a.dbase))}</td><td>${fmt(a.clk)}</td><td>${a.rev?inr(a.rev):'–'}</td></tr>`}
+  if(!rows.length)h+=`<tr><td colspan="14" class="l na" style="padding:24px">No rows match these filters. Clear the search or turn on more channels.</td></tr>`;
+  document.getElementById('ex').innerHTML=h+'</tbody>';document.getElementById('cnt').textContent=rows.length+' rows';
+  document.querySelectorAll('#ex th button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(sortK===k)sortD*=-1;else{sortK=k;sortD=['name','ch','status','dtype'].includes(k)?1:-1}explorer()});
+}
+function flowsTbl(){let h='<thead><tr><th class="l">Journey</th><th class="l">Version</th><th class="l">Status</th><th class="l">Published</th><th>Trips started</th><th>Engaged</th><th>Engage rate</th></tr></thead><tbody>';
+  FLOWS.slice().sort((a,b)=>b[4]-a[4]).forEach(f=>{h+=`<tr><td class="nm" title="${f[0]}"><b>${f[0].replace(/^(Duplicate - )+/,'')}</b>${/^Duplicate/.test(f[0])?'<span class="sub">duplicated journey</span>':''}</td><td class="l">${f[1].replace('Version ','v')}</td><td class="l"><span class="pill ${f[2]==='Active'?'on':''}">${f[2]}</span></td><td class="l">${dfmt(f[3])}</td><td>${fmt(f[4])}</td><td>${fmt(f[5])}</td><td>${pf(pct(f[5],f[4]))}</td></tr>`});
+  document.getElementById('flows').innerHTML=h+'</tbody>';
+  const fr=R.filter(r=>r.src==='F');const names=[...new Set(fr.map(r=>r.flow))];if(!fr.length){document.getElementById('flowch').innerHTML='<tbody><tr><td class="l na" style="padding:16px">Per-step channel sends for Flows are not included in this export. Trips above come from MoEngage flow analytics (10 Aug – 7 Nov).</td></tr></tbody>';return}
+  let g='<thead><tr><th class="l">Journey</th>'+ORDER.map(c=>`<th><i class="sw" style="background:var(${CH[c].c})"></i>${c}</th>`).join('')+'</tr></thead><tbody>';
+  names.forEach(n=>{g+=`<tr><td class="nm" title="${n}"><b>${n.replace(/^(Duplicate - )+/,'')}</b></td>`+ORDER.map(c=>{const a=agg(fr.filter(r=>r.flow===n&&r.ch===c));const v=c==='Web Push'||c==='On-site'?a.att:a.sent;return`<td>${a.n?fmt(v):'<span class="na">–</span>'}</td>`}).join('')+'</tr>'});
+  document.getElementById('flowch').innerHTML=g+'</tbody><caption style="caption-side:bottom;text-align:left;font-size:12px;color:var(--muted);padding:8px 10px">Messages sent per journey (attempted for Web Push and On-site), all versions combined.</caption>';
+}
+
+function split(){let h='<thead><tr><th class="l">Group</th><th class="l">Channel</th><th>Campaigns (with sends)</th><th>Sent</th><th>Delivered</th><th>Delivery rate</th><th>Read / opened</th><th>Engage rate</th><th>Email clicks</th><th>Conv.</th><th>Revenue</th><th>Share of sends</th></tr></thead><tbody>';
+  const tot=agg(R).sent||1;
+  ['run','sent','off'].forEach(g=>{const G=R.filter(r=>r.grp===g);
+    ['WhatsApp','Email'].forEach((ch,i)=>{const a=agg(G.filter(r=>r.ch===ch));if(!a.n)return;const m=chMetrics(ch,a);
+      h+=`<tr><td class="l">${i===0||!G.some(r=>r.ch==='WhatsApp')?`<b>${GRP[g]}</b>`:''}</td><td class="l"><i class="sw" style="background:var(${CH[ch].c})"></i>${ch}</td><td>${a.live} / ${a.n}</td><td>${fmt(a.sent)}</td><td>${fmt(a.del)}</td><td>${rateCell(m.dr,ch)}</td><td>${fmt(a.eng)}</td><td>${rateCell(m.er,ch)}</td><td>${ch==='Email'?fmt(a.clk):'<span class="na">–</span>'}</td><td>${a.ord||'<span class="na">–</span>'}</td><td>${a.rev?inr(a.rev):'<span class="na">–</span>'}</td><td>${pf(pct(a.sent,tot))}</td></tr>`});
+    const a=agg(G);h+=`<tr style="font-weight:700;background:var(--surface-2)"><td class="l">${GRP[g]} total</td><td></td><td>${a.live} / ${a.n}</td><td>${fmt(a.sent)}</td><td></td><td></td><td></td><td></td><td></td><td>${a.ord||'–'}</td><td>${a.rev?inr(a.rev):'–'}</td><td>${pf(pct(a.sent,tot))}</td></tr>`});
+  {const a=agg(R);h+=`<tr style="font-weight:800;background:var(--surface-2)"><td class="l">Grand total</td><td></td><td>${a.live} / ${a.n}</td><td>${fmt(a.sent)}</td><td>${fmt(a.del)}</td><td>${pf(pct(a.del,a.trSent))}</td><td>${fmt(a.eng)}</td><td></td><td>${fmt(a.clk)}</td><td>${a.ord}</td><td>${inr(a.rev)}</td><td>100%</td></tr>`}
+  document.getElementById('split').innerHTML=h+'</tbody>';}
+function render(){tiles();score();funnels();explorer()}
+document.querySelectorAll('.bar .seg button').forEach(b=>b.onclick=()=>{SCOPE=b.dataset.grp;document.querySelectorAll('.bar .seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+buildCtl();render();split();findings();flowsTbl();
+function evTbl(){const evs={};R.forEach(r=>r.ev.forEach(e=>(evs[e]=evs[e]||[]).push(r)));
+  const keys=Object.keys(evs).sort((a,b)=>evs[b].length-evs[a].length||a.localeCompare(b));
+  let h='<thead><tr><th class="l">Trigger event</th><th>Campaigns using it</th><th>Active now</th><th class="l">Channels</th><th>Sent</th><th>Delivered</th><th>Delivery rate</th><th>Read / opened</th><th>Conv.</th><th>Revenue</th></tr></thead><tbody>';
+  keys.forEach(e=>{const rs=evs[e],a=agg(rs),act=rs.filter(r=>r.status==='Active').length;const chs=[...new Set(rs.map(r=>r.ch))];
+    h+=`<tr data-ev="${encodeURIComponent(e)}" style="cursor:pointer"${EVENT===e?' class="sel"':''}><td class="l"><b>${e}</b></td><td>${rs.length}</td><td>${act}</td><td class="l">${chs.map(c=>`<i class="sw" style="background:var(${CH[c].c})"></i>${c}`).join(' ')}</td><td>${fmt(a.sent)}</td><td>${fmt(a.del)}</td><td>${pf(pct(a.del,a.trSent||a.sent))}</td><td>${fmt(a.eng)}</td><td>${a.ord||'<span class="na">–</span>'}</td><td>${a.rev?inr(a.rev):'<span class="na">–</span>'}</td></tr>`});
+  const trig=R.filter(r=>r.ev.length),ta=agg(trig),none=R.filter(r=>!r.ev.length),na=agg(none),all=agg(R);
+  const oneT=none.filter(r=>r.dtype==='One time').length,perT=none.filter(r=>r.dtype==='Periodic').length;
+  const row=(lab,sub,rs,a,key,bold)=>`<tr${key?` data-ev="${key}" style="cursor:pointer${bold?';font-weight:700;background:var(--surface-2)':''}"`:` style="font-weight:700;background:var(--surface-2)"`}><td class="l"><b>${lab}</b>${sub?` <span class="sub">${sub}</span>`:''}</td><td>${rs.length}</td><td>${rs.filter(r=>r.status==='Active').length}</td><td class="l">${[...new Set(rs.map(r=>r.ch))].join(', ')}</td><td>${fmt(a.sent)}</td><td>${fmt(a.del)}</td><td>${pf(pct(a.del,a.trSent||a.sent))}</td><td>${fmt(a.eng)}</td><td>${a.ord||'–'}</td><td>${a.rev?inr(a.rev):'–'}</td></tr>`;
+  h+=`<tr><td colspan="10" class="l" style="padding:14px 8px 6px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line-strong)"><b>Campaign totals – each campaign counted once, so these rows add up</b></td></tr>`;
+  h+=row('Event-triggered campaigns',`${keys.length} unique events`,trig,ta,'',false);
+  h+=row('No trigger event',`${oneT} one-time + ${perT} periodic`,none,na,'none',false);
+  h+=row('Total','',R,all,'',true);
+  const T=document.getElementById('evT');T.innerHTML=h+'</tbody><caption style="caption-side:bottom;text-align:left;font-size:12px;color:var(--muted);padding:8px 10px">Event rows overlap (one campaign can use several events), so they do not add up. The three rows at the bottom count each campaign once and do add up: event-triggered + no trigger event = total.</caption>';
+  T.querySelectorAll('tr[data-ev]').forEach(tr=>tr.onclick=()=>{const v=decodeURIComponent(tr.dataset.ev);setEvent(EVENT===v?'all':v)});}
+function setEvent(v){EVENT=v;document.getElementById('fEvent').value=v;render();evTbl()}
+(function(){const s=document.getElementById('fEvent');const evs=[...new Set(R.flatMap(r=>r.ev))].sort();
+  s.innerHTML+=evs.map(e=>`<option value="${e}">${e} (${R.filter(r=>r.ev.includes(e)).length})</option>`).join('')+`<option value="none">No trigger event – one-time / periodic</option>`;
+  s.onchange=()=>setEvent(s.value);})();
+evTbl();
+
+function charts(){calChart();drChart()}charts();let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(charts,150)});
+const PII=[["2026-08-10",80,75],["2026-08-11",63,6],["2026-08-12",30,4],["2026-08-13",6,1],["2026-08-14",6,1],["2026-08-15",6,1],["2026-08-16",2,1],["2026-08-17",6,1],["2026-08-18",9,1],["2026-08-19",13,0],["2026-08-20",8,0],["2026-08-21",6,1],["2026-08-22",2,0],["2026-08-23",2,1],["2026-08-24",3,0],["2026-08-25",2,1],["2026-08-26",3,1],["2026-08-27",4,1],["2026-08-28",5,0],["2026-08-29",12,0],["2026-08-30",68,5],["2026-08-31",915,3],["2026-09-01",677,1],["2026-09-02",639,4],["2026-09-03",928,7],["2026-09-04",975,5],["2026-09-05",889,4],["2026-09-06",978,10],["2026-09-07",1325,9],["2026-09-08",3021,15],["2026-09-09",1022,14],["2026-09-10",972,3],["2026-09-11",23467,15],["2026-09-12",16686,20],["2026-09-13",3755,6],["2026-09-14",14521,16],["2026-09-15",10116,15],["2026-09-16",8915,15],["2026-09-17",15135,23],["2026-09-18",25857,35],["2026-09-19",26678,29],["2026-09-20",28985,61],["2026-09-21",26572,17],["2026-09-22",11559,34],["2026-09-23",7470,33],["2026-09-24",6753,44],["2026-09-25",6359,48],["2026-09-26",6379,39],["2026-09-27",7561,30],["2026-09-28",6711,38],["2026-09-29",5938,29],["2026-09-30",6100,52],["2026-10-01",9120,58],["2026-10-02",10187,59],["2026-10-03",10399,53],["2026-10-04",11955,70],["2026-10-05",10889,91],["2026-10-06",9616,49],["2026-10-07",9693,36],["2026-10-08",8390,65],["2026-10-09",10977,2169],["2026-10-10",8367,45],["2026-10-11",8028,37],["2026-10-12",6387,4],["2026-10-13",8149,33],["2026-10-14",8199,34],["2026-10-15",8697,36],["2026-10-16",8443,37],["2026-10-17",8492,47],["2026-10-18",7945,31],["2026-10-19",7913,37],["2026-10-20",6840,19],["2026-10-21",6306,1],["2026-10-22",6567,4],["2026-10-23",2565,14],["2026-10-24",5099,27],["2026-10-25",7299,10],["2026-10-26",11020,20],["2026-10-27",10840,7],["2026-10-28",9405,6],["2026-10-29",8629,19],["2026-10-30",8919,23],["2026-10-31",8729,11],["2026-11-01",10205,21],["2026-11-02",10170,12],["2026-11-03",4812,8],["2026-11-04",10,0],["2026-11-05",10,0],["2026-11-06",8,0],["2026-11-07",7,0],["2026-11-08",4,0],["2026-11-09",6,0],["2026-11-10",8,0],["2026-11-11",12,0],["2026-11-12",4,0],["2026-11-13",7,0],["2026-11-14",6,0],["2026-11-15",3,0],["2026-11-16",4,0],["2026-11-17",4,0],["2026-11-18",1,0],["2026-11-19",3490,3488],["2026-11-20",4,0],["2026-11-21",6,4],["2026-11-22",5,0],["2026-11-23",5,0]];
+const BULK=['2026-10-09','2026-11-19'];
+const P=PII.map(r=>({d:r[0],n:r[1],m:r[2],bulk:BULK.includes(r[0])}));
+const sumP=(a,k)=>a.reduce((s,r)=>s+r[k],0);
+function pTiles(){const tn=sumP(P,'n'),tm=sumP(P,'m');const O=P.filter(r=>!r.bulk);const on=sumP(O,'n'),om=sumP(O,'m');
+  const peak=P.reduce((a,b)=>b.n>a.n?b:a);
+  const T=[['New users',fmt(tn),'10 Aug – 23 Nov, first seen'],['Mobiles captured',fmt(tm),pf(pct(tm,tn))+' PII rate, incl. imports'],
+    ['Organic mobiles',fmt(om),pf(pct(om,on))+' of '+fmt(on)+' organic new users'],['Bulk-imported',fmt(tm-om),'9 Oct and 19 Nov uploads'],
+    ['Peak day',fmt(peak.n),dfmt(peak.d)+' new users']];
+  document.getElementById('pTiles').innerHTML=T.map(t=>`<div class="tile"><div class="lbl">${t[0]}</div><div class="v">${t[1]}</div><div class="s">${t[2]}</div></div>`).join('');}
+function pBars(id,key,col){const el=document.getElementById(id);const W=el.clientWidth||600,H=el.clientHeight||280,m={l:48,r:8,t:10,b:30};const iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const mx=Math.max(...P.map(r=>r[key]));const st=mx>20000?10000:mx>5000?2000:mx>1000?1000:mx>200?100:10;const max=Math.ceil(mx/st)*st;const y=v=>m.t+ih-v/max*ih;const gw=iw/P.length;const bw=Math.max(1,gw-1);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${key==='n'?'New users':'Mobiles captured'} per day">`;
+  for(let v=0;v<=max;v+=st)s+=`<line class="${v?'gr':'ax'}" x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${v>=1000?(v/1000)+'k':v}</text>`;
+  P.forEach((r,i)=>{const x=m.l+gw*i;if(r.bulk)s+=`<rect x="${x-1}" y="${m.t}" width="${bw+2}" height="${ih}" fill="var(--warn)" opacity=".25"/>`;
+    const yy=y(r[key]);s+=`<rect x="${x}" y="${yy}" width="${bw}" height="${m.t+ih-yy}" fill="var(${r.bulk?'--serious':col})"/><rect x="${x}" y="${m.t}" width="${Math.max(bw,3)}" height="${ih}" fill="transparent" data-t="${encodeURIComponent(`<b>${dfmt(r.d)}</b>${r.bulk?' · bulk import':''}<br>New users: ${fmt(r.n)}<br>Mobiles: ${fmt(r.m)} (${pf(pct(r.m,r.n))})`)}"/>`});
+  ['2026-08-15','2026-09-01','2026-09-15','2026-10-01','2026-10-15','2026-11-01','2026-11-15'].forEach(d=>{const i=P.findIndex(r=>r.d===d);if(i<0||(W<520&&d.endsWith('15')))return;s+=`<text x="${m.l+gw*i+gw/2}" y="${H-10}" text-anchor="middle">${dfmt(d)}</text>`});
+  el.innerHTML=s+'</svg>';bindTips(el);}
+function pFind(){const O=P.filter(r=>!r.bulk);const on=sumP(O,'n'),om=sumP(O,'m');
+  const peakW=P.filter(r=>r.d>='2026-09-11'&&r.d<='2026-09-21');const pk={n:sumP(peakW,'n'),m:sumP(peakW,'m')};
+  const late=P.filter(r=>r.d>='2026-11-04'&&!r.bulk);const lateAvg=sumP(late,'n')/late.length;const oct=P.filter(r=>r.d>='2026-10-01'&&r.d<='2026-11-03');const octAvg=sumP(oct,'n')/oct.length;
+  const early=P.filter(r=>r.d<'2026-08-31');
+  const F=[
+   ['--crit','Capture','Almost no visitors leave a mobile number',`Organically, <b>${fmt(om)}</b> of <b>${fmt(on)}</b> new users have a mobile on file — <b>${pf(pct(om,on))}</b>. During the 11–21 Sep traffic peak only <b>${fmt(pk.m)}</b> of <b>${fmt(pk.n)}</b> new users (${pf(pct(pk.m,pk.n))}) were captured. Relaunch the on-site WhatsApp/SMS opt-in popup and push GoKwik checkout phone numbers into MoEngage.`],
+   ['--crit','Tracking','New-user tracking dropped off after 3 Nov',`New users averaged <b>${fmt(Math.round(octAvg))}</b> a day from 1 Oct – 3 Nov, then <b>${fmt(Math.round(lateAvg))}</b> a day from 4 Nov (excluding the 19 Nov import). A drop this sharp usually means tracking broke rather than traffic — check the MoEngage Web SDK on the Shopify theme against Shopify sessions.`],
+   ['--serious','Data quality','Two bulk imports inflate the total',`<b>9 Oct</b> added ${fmt(P.find(r=>r.d==='2026-10-09').m)} mobiles and <b>19 Nov</b> added ${fmt(P.find(r=>r.d==='2026-11-19').m)} — together ${pf(pct(sumP(P.filter(r=>r.bulk),'m'),sumP(P,'m')))} of all mobiles in the period. Report organic capture separately.`],
+   ['--serious','Tracking','Little was tracked before 31 Aug',`From 10–30 Aug MoEngage logged only <b>${fmt(sumP(early,'n'))}</b> new users in total, then ${fmt(P.find(r=>r.d==='2026-08-31').n)} on 31 Aug alone. Treat August as incomplete when comparing months.`],
+  ];
+  document.getElementById('pFind').innerHTML=F.map(f=>`<div class="fi" style="--sev:var(${f[0]})"><span class="tag">${f[1]}</span><h3>${f[2]}</h3><p>${f[3]}</p></div>`).join('');}
+function pWeek(){const wk={};P.forEach(r=>{const d=new Date(r.d+'T00:00:00');const k=new Date(d-((d.getDay()+6)%7)*864e5);const key=k.getFullYear()+'-'+String(k.getMonth()+1).padStart(2,'0')+'-'+String(k.getDate()).padStart(2,'0');
+    const w=wk[key]||(wk[key]={n:0,m:0,on:0,om:0});w.n+=r.n;w.m+=r.m;if(!r.bulk){w.on+=r.n;w.om+=r.m}});
+  let h='<thead><tr><th class="l">Week of</th><th>New users</th><th>Mobiles captured</th><th>PII rate</th><th>Organic mobiles</th><th>Organic PII rate</th></tr></thead><tbody>';
+  Object.keys(wk).sort().forEach(k=>{const w=wk[k];h+=`<tr><td>${dfmt(k)}</td><td>${fmt(w.n)}</td><td>${fmt(w.m)}</td><td>${pf(pct(w.m,w.n))}</td><td>${fmt(w.om)}</td><td>${pf(pct(w.om,w.on))}</td></tr>`});
+  const tn=sumP(P,'n'),tm=sumP(P,'m'),O=P.filter(r=>!r.bulk);h+=`<tr style="font-weight:700"><td>Total</td><td>${fmt(tn)}</td><td>${fmt(tm)}</td><td>${pf(pct(tm,tn))}</td><td>${fmt(sumP(O,'m'))}</td><td>${pf(pct(sumP(O,'m'),sumP(O,'n')))}</td></tr>`;
+  document.getElementById('pWeek').innerHTML=h+'</tbody>';}
+function pCharts(){pBars('pNew','n','--c-push');pBars('pMob','m','--c-wa')}
+const META_CH=document.getElementById('mastMeta').innerHTML;
+const META_P='<div><b>Data pulled</b>23 Nov 2026</div><div><b>First-seen window</b>10 Aug – 23 Nov 2026</div><div><b>Source</b>MoEngage user profiles</div>';
+const TABS={ch:{id:'t-ch',h:'Channel performance, 10 Aug – 23 Nov',p:'WhatsApp, Email, SMS and Web Push campaigns, plus Flows journey trips.',scope:'all'},
+  run:{id:'t-run',h:'Active / running campaigns, 10 Aug – 23 Nov',p:'Event-triggered and periodic campaigns that are Active in MoEngage today, and what they sent in the window.',scope:'run'},
+  sent:{id:'t-sent',h:'One-time campaigns sent, 10 Aug – 23 Nov',p:'Broadcasts sent once in the window: festive sales, launches, education and win-back pushes.',scope:'sent'},
+  pii:{id:'t-pii',h:'PII capture, 10 Aug – 23 Nov',p:'New users first seen each day and how many have an email or mobile number in MoEngage.'}};
+let TAB='ch';
+function markTab(k){Object.entries(TABS).forEach(([kk,v])=>document.getElementById(v.id).setAttribute('aria-selected',kk===k))}
+function setScope(g){SCOPE=g;document.querySelectorAll('.bar .seg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.grp===g));render();evTbl()}
+function showTab(k){TAB=k;const pii=k==='pii';document.getElementById('v-ch').hidden=pii;document.getElementById('v-pii').hidden=!pii;markTab(k);
+  document.querySelector('.mast h1').textContent=TABS[k].h;document.querySelector('.mast p').textContent=TABS[k].p;
+  document.getElementById('mastMeta').innerHTML=pii?META_P:META_CH;
+  if(pii){pCharts();return}
+  setScope(TABS[k].scope);charts();}
+const H2T={'#pii':'pii','#running':'run','#sent':'sent'},T2H={pii:'pii',run:'running',sent:'sent'};
+Object.entries(TABS).forEach(([k,v])=>document.getElementById(v.id).onclick=()=>{if(k==='ch'){history.replaceState(null,'',location.pathname+location.search);showTab('ch')}else if(location.hash==='#'+T2H[k])showTab(k);else location.hash=T2H[k]});
+addEventListener('hashchange',()=>showTab(H2T[location.hash]||'ch'));
+document.querySelectorAll('.bar .seg button').forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.grp;markTab(g==='run'?'run':g==='sent'?'sent':'ch');evTbl()}));
+pTiles();pFind();pWeek();
+if(H2T[location.hash])showTab(H2T[location.hash]);
+addEventListener('resize',()=>{if(!document.getElementById('v-pii').hidden)pCharts()});
+const SEGP=[["Add to Cart users","Aug10-Aug31",319,42,47,50,39],["Add to Cart users","Sep1-Sep30",15857,525,632,640,517],["Add to Cart users","Oct1-Oct31",19963,793,1038,1054,777],["Add to Cart users","Nov1-Nov30",4513,47,54,59,42],["Checkout Initiated users","Aug10-Aug31",139,42,48,51,39],["Checkout Initiated users","Sep1-Sep30",5622,509,609,627,491],["Checkout Initiated users","Oct1-Oct31",8714,813,1025,1081,757],["Checkout Initiated users","Nov1-Nov30",2068,43,51,55,39],["Payment Completed users","Aug10-Aug31",24,21,22,23,20],["Payment Completed users","Sep1-Sep30",285,285,285,285,285],["Payment Completed users","Oct1-Oct31",402,401,402,402,401],["Payment Completed users","Nov1-Nov30",23,22,22,22,22],["Abandoned Cart (never bought)","Aug10-Aug31",286,13,17,19,11],["Abandoned Cart (never bought)","Sep1-Sep30",15563,233,340,348,225],["Abandoned Cart (never bought)","Oct1-Oct31",19562,393,637,653,377],["Abandoned Cart (never bought)","Nov1-Nov30",4490,24,31,36,19],["Page Viewed / Product Search users","Aug10-Aug31",32,12,12,12,12],["Page Viewed / Product Search users","Sep1-Sep30",260,38,35,38,35],["Page Viewed / Product Search users","Oct1-Oct31",199,49,43,51,41],["Page Viewed / Product Search users","Nov1-Nov30",41,8,7,9,6],["Checkout Started but Not Completed","Aug10-Aug31",116,22,27,29,20],["Checkout Started but Not Completed","Sep1-Sep30",5376,263,363,381,245],["Checkout Started but Not Completed","Oct1-Oct31",8354,454,665,721,398],["Checkout Started but Not Completed","Nov1-Nov30",2049,24,32,36,20],["Item Purchased - unique users","Aug10-Aug31",22,19,20,21,18],["Item Purchased - unique users","Sep1-Sep30",277,277,277,277,277],["Item Purchased - unique users","Oct1-Oct31",399,398,399,399,398],["Item Purchased - unique users","Nov1-Nov30",22,21,21,21,21]];
+const SEG_ORDER=['Page Viewed / Product Search users','Add to Cart users','Abandoned Cart (never bought)','Checkout Initiated users','Checkout Started but Not Completed','Payment Completed users','Item Purchased - unique users'];
+let MONTH='Oct1-Oct31';
+function segTbl(){const pick=SEGP.filter(r=>MONTH==='all'||r[1]===MONTH);const by={};
+  pick.forEach(r=>{const o=by[r[0]]||(by[r[0]]={t:0,e:0,m:0,x:0,b:0});o.t+=r[2];o.e+=r[3];o.m+=r[4];o.x+=r[5];o.b+=r[6]});
+  const meter=(v,c)=>`<div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><span>${pf(v)}</span><span style="width:70px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:inline-block"><span style="display:block;height:100%;width:${Math.min(100,v*100)}%;background:var(${c})"></span></span></div>`;
+  let h='<thead><tr><th class="l">Segment</th><th>Users</th><th>Has email</th><th>Has mobile</th><th>Either</th><th>Both</th><th>Email coverage</th><th>Mobile coverage</th><th>Reachable (either)</th></tr></thead><tbody>';
+  SEG_ORDER.filter(s=>by[s]).forEach(s=>{const o=by[s];h+=`<tr><td class="l">${s}</td><td>${fmt(o.t)}</td><td>${fmt(o.e)}</td><td>${fmt(o.m)}</td><td>${fmt(o.x)}</td><td>${fmt(o.b)}</td><td>${meter(pct(o.e,o.t),'--c-email')}</td><td>${meter(pct(o.m,o.t),'--c-wa')}</td><td>${meter(pct(o.x,o.t),'--c-push')}</td></tr>`});
+  {const s=Object.values(by).reduce((a,o)=>({t:a.t+o.t,e:a.e+o.e,m:a.m+o.m,x:a.x+o.x,b:a.b+o.b}),{t:0,e:0,m:0,x:0,b:0});h+=`<tr style="font-weight:700;background:var(--surface-2)"><td class="l">Sum of segments*</td><td>${fmt(s.t)}</td><td>${fmt(s.e)}</td><td>${fmt(s.m)}</td><td>${fmt(s.x)}</td><td>${fmt(s.b)}</td><td>${meter(pct(s.e,s.t),'--c-email')}</td><td>${meter(pct(s.m,s.t),'--c-wa')}</td><td>${meter(pct(s.x,s.t),'--c-push')}</td></tr>`}
+  document.getElementById('segT').innerHTML=h+'</tbody>';
+  const ab=by['Abandoned Cart (never bought)'],co=by['Checkout Started but Not Completed'];
+  document.getElementById('segNote').innerHTML=ab&&co?`Only <b>${fmt(ab.x)}</b> of <b>${fmt(ab.t)}</b> cart abandoners (${pf(pct(ab.x,ab.t))}) and <b>${fmt(co.x)}</b> of <b>${fmt(co.t)}</b> checkout drop-offs (${pf(pct(co.x,co.t))}) can be reached by email or WhatsApp — buyers are near 100% because checkout collects their details. *Sum of segments adds every row; the same user sits in several segments, so it is not a count of unique users.${MONTH==='all'?' All months adds the monthly counts, so a user active in two months counts twice.':''} Source: segment_pii_coverage_report.csv.`:'';}
+document.querySelectorAll('#mSeg button').forEach(b=>b.onclick=()=>{MONTH=b.dataset.m;document.querySelectorAll('#mSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));segTbl()});
+segTbl();
+</script>
+
+</body></html>
